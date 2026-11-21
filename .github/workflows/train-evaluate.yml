@@ -49,7 +49,9 @@ jobs:
           git add results/EVALUATION.md results/metrics.json results/test_forecast_window.png
           if ! git diff --cached --quiet; then
             git commit -m "Publish measured evaluation on original UCI Beijing PM2.5 dataset"
-            git push
+            # Another commit may have landed while training; preserve it safely.
+            git pull --rebase origin main
+            git push origin main
           else
             echo "Existing results are current"
           fi
