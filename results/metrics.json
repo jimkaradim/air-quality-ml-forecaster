@@ -1,0 +1,65 @@
+{
+  "dataset": "UCI Beijing PM2.5 dataset 381",
+  "forecast_horizon_hours": 1,
+  "method": "Chronological 70/15/15 raw-row split; one-hour boundary embargo; no shuffle",
+  "target_units": "micrograms per cubic meter (ug/m3)",
+  "model": "HistGradientBoostingRegressor",
+  "feature_columns": [
+    "pm2_5_now",
+    "pm2_5_lag1",
+    "pm2_5_lag3",
+    "pm2_5_roll3",
+    "DEWP",
+    "TEMP",
+    "PRES",
+    "Iws",
+    "Is",
+    "Ir",
+    "hour",
+    "month",
+    "dayofweek",
+    "cbwd"
+  ],
+  "splits": {
+    "train": {
+      "observations": 28591,
+      "model": {
+        "MAE": 11.8612,
+        "RMSE": 20.5512,
+        "R2": 0.9513
+      },
+      "persistence_baseline": {
+        "MAE": 13.3521,
+        "RMSE": 25.3896,
+        "R2": 0.9257
+      }
+    },
+    "validation": {
+      "observations": 6492,
+      "model": {
+        "MAE": 12.3423,
+        "RMSE": 21.8725,
+        "R2": 0.9506
+      },
+      "persistence_baseline": {
+        "MAE": 12.6631,
+        "RMSE": 22.7775,
+        "R2": 0.9464
+      }
+    },
+    "test": {
+      "observations": 6455,
+      "model": {
+        "MAE": 10.4606,
+        "RMSE": 18.5857,
+        "R2": 0.9441
+      },
+      "persistence_baseline": {
+        "MAE": 10.9645,
+        "RMSE": 20.0609,
+        "R2": 0.9348
+      }
+    }
+  },
+  "report_generated_utc": "2026-11-21T08:14:31.317663+00:00"
+}
