@@ -49,6 +49,15 @@ Tests:
 python -m pytest -q
 ```
 
+To generate a measured evaluation report and a PNG plot after real training:
+
+```bash
+python scripts/render_results.py
+```
+
+You can also run the GitHub Actions workflow [Real-data training and evaluation](.github/workflows/train-evaluate.yml) from the **Actions** tab. When GitHub Actions has permission to run and push, it publishes measured metrics and the historical forecast plot to the [`results/`](results/) folder. If that folder is not yet available, **real-data training has not been verified**; do not claim numerical accuracy.
+
+
 ## Repository layout
 
 ```text
