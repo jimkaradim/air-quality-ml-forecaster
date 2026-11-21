@@ -73,11 +73,26 @@ artifacts/                    # Local trained model and results (gitignored)
 DATA_LICENSE.md               # Dataset attribution and license
 ```
 
+## Real-dataset evaluation (verified 21 Nov 2026)
+
+The model was trained on the original UCI Beijing PM2.5 historical measurements and evaluated on **6,455 unseen chronological test observations**. The measured one-hour-ahead results are:
+
+| Approach | MAE (µg/m³) ↓ | RMSE (µg/m³) ↓ | R² ↑ |
+|---|---:|---:|---:|
+| **Gradient boosting model** | **10.4606** | **18.5857** | **0.9441** |
+| Persistence baseline | 10.9645 | 20.0609 | 0.9348 |
+
+This was **4.6% lower MAE** than predicting that the next hour equals the current PM2.5. The baseline is already strong; this is a modest measured improvement, not a production-accuracy claim.
+
+![Last 168 observations in the historical held-out test set](results/test_forecast_window.png)
+
+[Full evaluation methodology, plot and model-vs-baseline report](results/EVALUATION.md) · [All measured train/validation/test metrics (JSON)](results/metrics.json) · [Successful real-data GitHub Actions run](https://github.com/jimkaradim/air-quality-ml-forecaster/actions/runs/44883879936)
+
 ## Evaluation and methodological notes
 
 The target is the PM2.5 reading at time **t+1**. Features use only measurements available through **t**, with the current pollution reading assumed available at prediction time. Observations with missing targets or non-consecutive next-hour timestamps are removed. A training-only median imputer handles missing numeric weather inputs and one-hot encoding handles wind direction. Predictions are clipped to nonnegative values.
 
-**No real-dataset evaluation figures are claimed here.** Run `python train.py` after downloading the genuine UCI data, then see `artifacts/metrics.json` for model and baseline MAE/RMSE/R² and `artifacts/test_predictions.csv` for test predictions. Tests on synthetic fixtures check the implementation and do **not** measure real-world accuracy.
+The above real-data figures were generated in a GitHub Actions run and written to [`results/`](results/). You can reproduce them by running `python train.py` on the original UCI CSV, followed by `python scripts/render_results.py`. The CI unit tests use synthetic fixtures and do **not** measure real-world accuracy.
 
 This historical model does not forecast current air quality in Athens or modern Beijing. It should not be used for public-safety, regulatory or health decisions. Model artifact files should only be loaded if trusted.
 
