@@ -1,0 +1,79 @@
+# Air Quality ML Forecaster 🌫️
+
+**One-hour-ahead PM2.5 forecasting** using hourly air-pollution measurements and weather data, Python, pandas, scikit-learn and a local Streamlit dashboard.
+
+> **Portfolio provenance:** This is a newly created, AI-assisted portfolio reconstruction inspired by an earlier lost university air-pollution assignment. It is **not** the original university submission and has not been deployed or used in production. Review, run and understand the code before describing your contributions in a job application.
+
+## Project features
+
+- Trains using the public **Beijing PM2.5** dataset (UCI Machine Learning Repository), with hourly readings collected during 2010–2014.
+- Forecasts the **next hour's PM2.5 concentration**, in micrograms per cubic meter (µg/m³).
+- Input features include current/lagged pollution readings, a rolling mean, dew point, temperature, atmospheric pressure, wind and precipitation, plus date features.
+- Uses a **chronological 70/15/15 train/validation/test split** instead of randomly splitting time-series data, with a one-hour separation of targets across boundaries.
+- Compares `HistGradientBoostingRegressor` to a **persistence baseline**, which predicts the current PM2.5 as next-hour PM2.5.
+- Exports MAE, RMSE, R², test predictions and a trained model after running training.
+- Includes local **Streamlit dashboard**, command-line prediction and six automated tests.
+
+## Quick start — Windows PowerShell
+
+Install Python 3.11 or newer, open PowerShell inside the project folder, and run:
+
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements-dev.txt
+python scripts/download_data.py
+python train.py
+python predict.py
+streamlit run app.py
+```
+
+If activation is blocked, use `.\.venv\Scripts\python.exe` instead of `python` and `.\.venv\Scripts\streamlit.exe` instead of `streamlit`.
+
+**Mac / Linux:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+python scripts/download_data.py
+python train.py
+python predict.py
+streamlit run app.py
+```
+
+Tests:
+
+```bash
+python -m pytest -q
+```
+
+## Repository layout
+
+```text
+air_quality/features.py       # CSV validation, chronological features and labels
+air_quality/model.py          # ML pipeline, evaluation and prediction
+scripts/download_data.py      # Download source dataset
+train.py                      # Train and evaluate
+predict.py                    # Command-line inference
+app.py                        # Local Streamlit dashboard
+tests/                        # Automated tests using synthetic data
+data/                         # Local dataset (gitignored)
+artifacts/                    # Local trained model and results (gitignored)
+DATA_LICENSE.md               # Dataset attribution and license
+```
+
+## Evaluation and methodological notes
+
+The target is the PM2.5 reading at time **t+1**. Features use only measurements available through **t**, with the current pollution reading assumed available at prediction time. Observations with missing targets or non-consecutive next-hour timestamps are removed. A training-only median imputer handles missing numeric weather inputs and one-hot encoding handles wind direction. Predictions are clipped to nonnegative values.
+
+**No real-dataset evaluation figures are claimed here.** Run `python train.py` after downloading the genuine UCI data, then see `artifacts/metrics.json` for model and baseline MAE/RMSE/R² and `artifacts/test_predictions.csv` for test predictions. Tests on synthetic fixtures check the implementation and do **not** measure real-world accuracy.
+
+This historical model does not forecast current air quality in Athens or modern Beijing. It should not be used for public-safety, regulatory or health decisions. Model artifact files should only be loaded if trusted.
+
+## Dataset attribution
+
+Chen, S. (2015). *Beijing PM2.5* [Dataset]. UCI Machine Learning Repository. [DOI: 10.24432/C5JS49](https://doi.org/10.24432/C5JS49). Licensed **CC BY 4.0**. The full CSV is downloaded separately, not committed to this repository. See [DATA_LICENSE.md](DATA_LICENSE.md).
+
+Source code is MIT-licensed; this license does not change the third-party dataset's rights.
